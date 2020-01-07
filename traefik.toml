@@ -1,0 +1,41 @@
+# defaultEntryPoints must be at the top 
+# because it should not be in any table below
+
+defaultEntryPoints = ["https", "http"]
+
+# Entrypoints, http and https
+[entryPoints]
+
+  # http should be redirected to https
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+
+  # https is the default
+  [entryPoints.https]
+    address = ":443"
+  [entryPoints.https.tls]
+  [entryPoints.traefik]
+    address = ":8080"
+    [entryPoints.traefik.auth.basic]
+    users = ["admin:$apr1$X04JvkYj$hnE2vHM0v1FQ8y2pB879y/"]
+
+[retry]
+# Enable ACME (Let's Encrypt): automatic SSL
+[acme]
+email = "sami.ghazouane@gmail.com"
+storage = "/acme.json"
+entryPoint = "https"
+OnHostRule = true
+[acme.httpChallenge]
+entryPoint = "http"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+watch = true
+exposedByDefault = false
+
+[api]
+entryPoint = "traefik"
+dashboard = true
